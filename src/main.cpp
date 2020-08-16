@@ -1,7 +1,8 @@
 #include <antlr4-runtime/antlr4-runtime.h>
 
-#include "Verilog2001Lexer.h"
-#include "Verilog2001Parser.h"
+#include "parser/Verilog2001Lexer.h"
+#include "parser/Verilog2001Parser.h"
+#include "parser/Verilog2001BaseListener.h"
 
 using namespace antlr4;
 using namespace antlrcpp;
@@ -18,7 +19,15 @@ int main(int argc, const char ** argv) {
     }
 
     Verilog2001Parser parser(&tokens);
-    tree::ParseTree* tree = parser.module_declaration();
-    std::cout << tree->toStringTree(&parser, true) << std::endl << std::endl;
+    Verilog2001BaseListener myListener;
+
+    //parser.addParseListener(&myListener);
+
+
+    tree::ParseTree* tree = parser.source_text();
+    //auto newTree = parser.consume();
+    tree::ParseTreeWalker walker;
+    walker.walk(&myListener, tree);
+    //std::cout << tree->toStringTree(&parser, true) << std::endl << std::endl;
     return 0;
 }

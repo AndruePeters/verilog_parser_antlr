@@ -1,0 +1,2 @@
+add_library(circuit_builder INTERFACE)
+target_include_directories(circuit_builder INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})

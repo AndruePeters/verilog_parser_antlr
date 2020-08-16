@@ -3,7 +3,7 @@
 #
 
 cmake_minimum_required (VERSION 3.12.2)
-project (metrics)
+project (vparse)
 include (cmake/StandardProjectSettings.cmake)
 
 # use C++17
@@ -41,10 +41,10 @@ include(cmake/StaticAnalyzers.cmake)
 
 # option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" OFF)
 # option(ENABLE_TESTING "Enable Test Builds" OFF)
+add_subdirectory(src/circuit_builder)
 
-
-add_executable(vparse src/main.cpp src/Verilog2001Lexer.cpp src/Verilog2001Listener.cpp src/Verilog2001Parser.cpp src/Verilog2001BaseListener.cpp)
-target_link_libraries(vparse PUBLIC project_options project_warnings
-antlr4-runtime)
+add_executable(vparse src/main.cpp src/parser/Verilog2001Lexer.cpp src/parser/Verilog2001Listener.cpp src/parser/Verilog2001Parser.cpp 
+                      src/parser/Verilog2001BaseListener.cpp src/parser/parser_conversions.cpp)
+target_link_libraries(vparse PUBLIC project_options project_warnings antlr4-runtime circuit_builder)
 target_include_directories(vparse PUBLIC /usr/include/antlr4-runtime)
 
