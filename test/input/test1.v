@@ -26,7 +26,7 @@ module c1 (
     c2 C2_1 (.in0(in[0]), .in1(in[1]), .y(out[0]), .z(out[1]));
 
 
-    c2 C2_1 (
+    c2 C2_2 (
         .in0(in[2]),
         .in1(in[3]), .y(out[2]), .z(out[3]));
 
