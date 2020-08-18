@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include "parser_conversions.h"
+#include <circuit_builder.h>
 
 
 /**
@@ -18,6 +19,7 @@
  */
 class  Verilog2001BaseListener : public Verilog2001Listener {
 public:
+  CircuitBuilder circuit;
 
   virtual void enterConfig_declaration(Verilog2001Parser::Config_declarationContext * /*ctx*/) override { }
   virtual void exitConfig_declaration(Verilog2001Parser::Config_declarationContext * /*ctx*/) override { }
@@ -55,7 +57,8 @@ public:
   virtual void enterModule_declaration(Verilog2001Parser::Module_declarationContext * modDecl) override 
   { 
     const auto mod = to_module_definition(modDecl);
-    std::cout << "Mod Decl: " << mod.name() << std::endl;
+    circuit.addModule(mod);
+    std::cout << "Module Decl: " << circuit.getModule().name() << std::endl;
   }
   virtual void exitModule_declaration(Verilog2001Parser::Module_declarationContext * /*ctx*/) override { }
 
@@ -72,11 +75,7 @@ public:
   virtual void exitList_of_port_declarations(Verilog2001Parser::List_of_port_declarationsContext * /*ctx*/) override { }
 
   virtual void enterPort(Verilog2001Parser::PortContext * port/*ctx*/) override { 
-    std::cout << "port: " << port->getText() << std::endl;
-    std::cout << port->port_identifier() << std::endl;
-    if(port->port_expression()) std::cout << "port expression: " << port->port_expression()->getText() << std::endl;
-     // std::cout << "PortIdentifier: " << port->port_identifier()->getText() << "\n"
-     //   << "PortExpression: " << port->port_expression()->getText() << std::endl;   
+
   }
   virtual void exitPort(Verilog2001Parser::PortContext * /*ctx*/) override { }
 
@@ -88,6 +87,7 @@ public:
 
   virtual void enterPort_declaration(Verilog2001Parser::Port_declarationContext * port /*ctx*/) override { 
     Circuit::Definition::Port myPort = to_port(port);
+    circuit.getModule().addPort(myPort);
     std::cout << "port name: " << myPort.name() << " [" << myPort.width().lsb << "," << myPort.width().msb << "]\n";
   }
   virtual void exitPort_declaration(Verilog2001Parser::Port_declarationContext * /*ctx*/) override { }
@@ -373,12 +373,9 @@ public:
   virtual void exitPass_switchtype(Verilog2001Parser::Pass_switchtypeContext * /*ctx*/) override { }
 
   virtual void enterModule_instantiation(Verilog2001Parser::Module_instantiationContext * inst/*ctx*/) override { 
-    std::cout << "ModuleInstContext: " << std::endl;
-    std::cout << "\tModule Type: " << inst->module_identifier()->getText() << "\n\t";
-    for (const auto i : inst->module_instance()) {
-      std::cout << " " << i->name_of_instance()->getText();
-    }
-    std::cout << std::endl << std::endl;
+    const auto instance = to_instance(inst);
+    circuit.getModule().addInstance(instance);
+    std::cout << instance.type() << " " << instance.name() << std::endl;
 
   }
   virtual void exitModule_instantiation(Verilog2001Parser::Module_instantiationContext * /*ctx*/) override { }
