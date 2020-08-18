@@ -52,3 +52,10 @@ Circuit::Definition::InstanceDefinition to_instance(Verilog2001Parser::Module_in
     Circuit::Definition::InstanceDefinition instance (type, name);
     return instance;
 }
+
+Circuit::Definition::Net to_net(Verilog2001Parser::Net_declarationContext * net)
+{
+    const auto bw = to_bitwidth(net->range_());
+    std::cout << "net type: " << net->net_type()->getText() << std::endl;
+    return Circuit::Definition::Net(net->net_type()->getText(), net->list_of_net_identifiers()->net_identifier().front()->getText(), bw);
+}
