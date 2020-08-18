@@ -8,9 +8,8 @@ class CircuitBuilder {
     std::vector<Circuit::Definition::ModuleDefinition> moduleDefs;
 
 public:
-    void addModule(const std::string moduleName);
-    
-
+    void addModule(const Circuit::Definition::ModuleDefinition module);
+    Circuit::Definition::ModuleDefinition& getModule();
 };
 
 #endif
