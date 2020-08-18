@@ -43,3 +43,12 @@ Circuit::Definition::ModuleDefinition to_module_definition(Verilog2001Parser::Mo
 {
     return {modDecl->module_identifier()->identifier()->getText()};
 }
+
+Circuit::Definition::InstanceDefinition to_instance(Verilog2001Parser::Module_instantiationContext * inst)
+{
+    const std::string type = inst->module_identifier()->getText();
+    const std::string name = inst->module_instance().front()->name_of_instance()->getText();
+
+    Circuit::Definition::InstanceDefinition instance (type, name);
+    return instance;
+}
