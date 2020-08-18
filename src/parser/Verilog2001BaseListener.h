@@ -54,12 +54,8 @@ public:
   virtual void enterDescription(Verilog2001Parser::DescriptionContext * /*ctx*/) override { }
   virtual void exitDescription(Verilog2001Parser::DescriptionContext * /*ctx*/) override { }
 
-  virtual void enterModule_declaration(Verilog2001Parser::Module_declarationContext * modDecl) override 
-  { 
-    const auto mod = to_module_definition(modDecl);
-    circuit.addModule(mod);
-    std::cout << "Module Decl: " << circuit.getModule().name() << std::endl;
-  }
+  virtual void enterModule_declaration(Verilog2001Parser::Module_declarationContext * modDecl);
+
   virtual void exitModule_declaration(Verilog2001Parser::Module_declarationContext * /*ctx*/) override { }
 
   virtual void enterModule_keyword(Verilog2001Parser::Module_keywordContext * /*ctx*/) override { }
@@ -85,11 +81,7 @@ public:
   virtual void enterPort_reference(Verilog2001Parser::Port_referenceContext * /*ctx*/) override { }
   virtual void exitPort_reference(Verilog2001Parser::Port_referenceContext * /*ctx*/) override { }
 
-  virtual void enterPort_declaration(Verilog2001Parser::Port_declarationContext * port /*ctx*/) override { 
-    Circuit::Definition::Port myPort = to_port(port);
-    circuit.getModule().addPort(myPort);
-    std::cout << "port name: " << myPort.name() << " [" << myPort.width().lsb << "," << myPort.width().msb << "]\n";
-  }
+  virtual void enterPort_declaration(Verilog2001Parser::Port_declarationContext * port /*ctx*/);
   virtual void exitPort_declaration(Verilog2001Parser::Port_declarationContext * /*ctx*/) override { }
 
   virtual void enterModule_item(Verilog2001Parser::Module_itemContext * /*ctx*/) override { }
@@ -149,7 +141,7 @@ public:
   virtual void enterReg_declaration(Verilog2001Parser::Reg_declarationContext * /*ctx*/) override { }
   virtual void exitReg_declaration(Verilog2001Parser::Reg_declarationContext * /*ctx*/) override { }
 
-  virtual void enterNet_declaration(Verilog2001Parser::Net_declarationContext * /*ctx*/) override { }
+  virtual void enterNet_declaration(Verilog2001Parser::Net_declarationContext * net/*ctx*/);
   virtual void exitNet_declaration(Verilog2001Parser::Net_declarationContext * /*ctx*/) override { }
 
   virtual void enterNet_type(Verilog2001Parser::Net_typeContext * /*ctx*/) override { }
@@ -290,10 +282,7 @@ public:
   virtual void enterBlock_variable_type(Verilog2001Parser::Block_variable_typeContext * /*ctx*/) override { }
   virtual void exitBlock_variable_type(Verilog2001Parser::Block_variable_typeContext * /*ctx*/) override { }
 
-  virtual void enterGate_instantiation(Verilog2001Parser::Gate_instantiationContext * gate/*ctx*/) override { 
-      //std::cout << gate->enable_gate_instance().front()->getText() << std::endl;
-            std::cout << "gate: " << gate->getText() << '\n';
-  }
+  virtual void enterGate_instantiation(Verilog2001Parser::Gate_instantiationContext * gate/*ctx*/);
   virtual void exitGate_instantiation(Verilog2001Parser::Gate_instantiationContext * /*ctx*/) override { }
 
   virtual void enterCmos_switch_instance(Verilog2001Parser::Cmos_switch_instanceContext * /*ctx*/) override { }
@@ -306,9 +295,7 @@ public:
   virtual void exitMos_switch_instance(Verilog2001Parser::Mos_switch_instanceContext * /*ctx*/) override { }
 
   virtual void enterN_input_gate_instance(Verilog2001Parser::N_input_gate_instanceContext * gateInst) override {
-      std::cout << "n_input_gate_inst: " << 
-        gateInst->name_of_gate_instance()->gate_instance_identifier()->getText()
-        << std::endl;
+
    }
   virtual void exitN_input_gate_instance(Verilog2001Parser::N_input_gate_instanceContext * /*ctx*/) override { }
 
@@ -372,12 +359,8 @@ public:
   virtual void enterPass_switchtype(Verilog2001Parser::Pass_switchtypeContext * /*ctx*/) override { }
   virtual void exitPass_switchtype(Verilog2001Parser::Pass_switchtypeContext * /*ctx*/) override { }
 
-  virtual void enterModule_instantiation(Verilog2001Parser::Module_instantiationContext * inst/*ctx*/) override { 
-    const auto instance = to_instance(inst);
-    circuit.getModule().addInstance(instance);
-    std::cout << instance.type() << " " << instance.name() << std::endl;
+  virtual void enterModule_instantiation(Verilog2001Parser::Module_instantiationContext * inst/*ctx*/) override;
 
-  }
   virtual void exitModule_instantiation(Verilog2001Parser::Module_instantiationContext * /*ctx*/) override { }
 
   virtual void enterParameter_value_assignment(Verilog2001Parser::Parameter_value_assignmentContext * /*ctx*/) override { }
@@ -918,7 +901,7 @@ public:
   virtual void exitModule_instance_identifier(Verilog2001Parser::Module_instance_identifierContext * /*ctx*/) override { }
 
   virtual void enterNet_identifier(Verilog2001Parser::Net_identifierContext * net) override { 
-    std::cout << "net: " << net->identifier()->getText() << std::endl;
+    //std::cout << "net: " << net->identifier()->getText() << std::endl;
   }
   virtual void exitNet_identifier(Verilog2001Parser::Net_identifierContext * /*ctx*/) override { }
 

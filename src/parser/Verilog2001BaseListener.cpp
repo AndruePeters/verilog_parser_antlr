@@ -5,3 +5,36 @@
 #include "Verilog2001BaseListener.h"
 
 
+void Verilog2001BaseListener::enterModule_declaration(Verilog2001Parser::Module_declarationContext * modDecl) 
+{ 
+    const auto mod = to_module_definition(modDecl);
+    circuit.addModule(mod);
+
+    if (modDecl->list_of_port_declarations() == nullptr) return;
+    for (auto& port: modDecl->list_of_port_declarations()->port_declaration()) {
+        const auto portDef = to_port(port);
+        circuit.getModule().addPort(portDef);
+    }
+    //std::cout << "Module Decl: " << circuit.getModule().name() << std::endl;
+}
+
+void Verilog2001BaseListener::enterPort_declaration(Verilog2001Parser::Port_declarationContext * port /*ctx*/) { 
+    //Circuit::Definition::Port myPort = to_port(port);
+    //circuit.getModule().addPort(myPort);
+    //std::cout << "port name: " << myPort.name() << " [" << myPort.width().lsb << "," << myPort.width().msb << "]\n";
+}
+
+void Verilog2001BaseListener::enterNet_declaration(Verilog2001Parser::Net_declarationContext * net/*ctx*/) { 
+    auto& module = circuit.getModule();
+    module.addNet(to_net(net));
+}
+
+void Verilog2001BaseListener::enterGate_instantiation(Verilog2001Parser::Gate_instantiationContext * gate/*ctx*/) { 
+    //std::cout << gate->enable_gate_instance().front()->getText() << std::endl;
+    //std::cout << "gate: " << gate->getText() << '\n';
+}
+
+void Verilog2001BaseListener::enterModule_instantiation(Verilog2001Parser::Module_instantiationContext * inst/*ctx*/) { 
+    const auto instance = to_instance(inst);
+    circuit.getModule().addInstance(std::move(instance));
+}
