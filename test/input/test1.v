@@ -5,6 +5,7 @@ module top_c0 (
 
     wire [13:0] a;
     wire [11:0] b;
+    reg register;
 
     assign a = i;
     assign o = b;
