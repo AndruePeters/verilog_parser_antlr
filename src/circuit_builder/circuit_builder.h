@@ -9,6 +9,7 @@ class CircuitBuilder {
 
 public:
     void addModule(const Circuit::Definition::ModuleDefinition module);
+
     Circuit::Definition::ModuleDefinition& getModule();
 };
 
