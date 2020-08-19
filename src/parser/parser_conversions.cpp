@@ -1,11 +1,15 @@
+/// Andrue Peters
+/// 08/18/2020
+/// Converts ANTLR Parser objects to Circuit::Definition objects 
+
 #include "parser_conversions.h"
 
 #include <string>
 
 Circuit::Definition::Port to_port(Verilog2001Parser::Port_declarationContext* port)
 {
-    Circuit::PortDir dir;
-    std::string name;
+    Circuit::PortDir dir = Circuit::PortDir::input;
+    std::string name = "unitialized";
     Circuit::BitWidth bw;
 
     if (port->inout_declaration() != nullptr) {
@@ -31,10 +35,8 @@ Circuit::BitWidth to_bitwidth(Verilog2001Parser::Range_Context* range)
 {
     if (range == nullptr) return {0, 0};
 
-    auto lsbPtr = range->lsb_constant_expression();
-    auto msbPtr = range->msb_constant_expression();
-    const int lsb = std::stoi(lsbPtr->getText());
-    const int msb = std::stoi(msbPtr->getText()); 
+    const int lsb = std::stoi(range->lsb_constant_expression()->getText());
+    const int msb = std::stoi(range->msb_constant_expression()->getText()); 
 
     return {lsb, msb};
 }
@@ -56,6 +58,5 @@ Circuit::Definition::InstanceDefinition to_instance(Verilog2001Parser::Module_in
 Circuit::Definition::Net to_net(Verilog2001Parser::Net_declarationContext * net)
 {
     const auto bw = to_bitwidth(net->range_());
-    std::cout << "net type: " << net->net_type()->getText() << std::endl;
     return Circuit::Definition::Net(net->net_type()->getText(), net->list_of_net_identifiers()->net_identifier().front()->getText(), bw);
 }
