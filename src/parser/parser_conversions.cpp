@@ -24,6 +24,8 @@ Circuit::Definition::Port to_port(Verilog2001Parser::Port_declarationContext* po
         dir =  Circuit::PortDir::output;
         name = port->output_declaration()->list_of_port_identifiers()->port_identifier().front()->getText();
         bw = to_bitwidth(port->output_declaration()->range_());
+    } else {
+        throw std::runtime_error("All port declaration are nullptr. Something very wrong happened.");
     }
 
     Circuit::Definition::Port portDef (std::move(name), bw);
