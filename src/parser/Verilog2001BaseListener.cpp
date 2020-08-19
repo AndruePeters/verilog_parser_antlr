@@ -3,10 +3,10 @@
 
 
 #include "Verilog2001BaseListener.h"
+#include "circuit_def.h"
 
 
-void Verilog2001BaseListener::enterModule_declaration(Verilog2001Parser::Module_declarationContext * modDecl) 
-{ 
+void Verilog2001BaseListener::enterModule_declaration(Verilog2001Parser::Module_declarationContext* modDecl) {
     const auto mod = to_module_definition(modDecl);
     circuit.addModule(mod);
 
@@ -18,23 +18,23 @@ void Verilog2001BaseListener::enterModule_declaration(Verilog2001Parser::Module_
     //std::cout << "Module Decl: " << circuit.getModule().name() << std::endl;
 }
 
-void Verilog2001BaseListener::enterPort_declaration(Verilog2001Parser::Port_declarationContext * port /*ctx*/) { 
+void Verilog2001BaseListener::enterPort_declaration(Verilog2001Parser::Port_declarationContext*) {
     //Circuit::Definition::Port myPort = to_port(port);
     //circuit.getModule().addPort(myPort);
     //std::cout << "port name: " << myPort.name() << " [" << myPort.width().lsb << "," << myPort.width().msb << "]\n";
 }
 
-void Verilog2001BaseListener::enterNet_declaration(Verilog2001Parser::Net_declarationContext * net/*ctx*/) { 
+void Verilog2001BaseListener::enterNet_declaration(Verilog2001Parser::Net_declarationContext* net) {
     auto& module = circuit.getModule();
     module.addNet(to_net(net));
 }
 
-void Verilog2001BaseListener::enterGate_instantiation(Verilog2001Parser::Gate_instantiationContext * gate/*ctx*/) { 
-    //std::cout << gate->enable_gate_instance().front()->getText() << std::endl;
-    //std::cout << "gate: " << gate->getText() << '\n';
+void Verilog2001BaseListener::enterGate_instantiation(Verilog2001Parser::Gate_instantiationContext* gate) {
+    const auto& primitive = to_primitive(gate);
+    circuit.getModule().addPrimitive((std::move(primitive)));
 }
 
-void Verilog2001BaseListener::enterModule_instantiation(Verilog2001Parser::Module_instantiationContext * inst/*ctx*/) { 
+void Verilog2001BaseListener::enterModule_instantiation(Verilog2001Parser::Module_instantiationContext* inst/*ctx*/) {
     const auto instance = to_instance(inst);
     circuit.getModule().addInstance(std::move(instance));
 }
