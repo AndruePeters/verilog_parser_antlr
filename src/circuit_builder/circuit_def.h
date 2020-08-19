@@ -123,21 +123,7 @@ public:
     
     /// Add a port to an instance
     /// Throws exception of a port with the same name already exists
-    Port& addPort(const Port portDef) {
-        auto portIt = std::find_if(ports_.begin(), ports_.end(), 
-            [&portDef](const Port& pd) {
-                return portDef.name() == pd.name();
-            });
-
-        /// If the port exists
-        if (portIt != ports_.end()) {
-            throw std::runtime_error("Can't have multiple ports with the same name");
-        }
-
-        /// If the port does exist
-        ports_.push_back(std::move(portDef));
-        return ports_.back();
-    }
+    Port& addPort(const Port portDef);
 
     const std::string& name() const { return name_; }
     const std::string& type() const { return type_; }
@@ -146,7 +132,6 @@ private:
     std::string  name_;
     std::vector<Port> ports_;
 };
-
 
 /// Models gates in Verilog: buf, xor, or, not, and
 class VerilogPrimitiveDefinition {
@@ -173,117 +158,40 @@ public:
     /// Add a port to an instance definition
     /// Throws exception of port already exists as it's a sign of a malformed Verilog file
     /// \return Reference to newly added port
-    Port& addPort(const Port portDef) {
-
-        auto* port = findPort(portDef.name()); 
-
-        /// If the port exists
-        if (port != nullptr) {
-            throw std::runtime_error("Can't have multiple ports with the same name");
-        }
-
-        /// If the port does exist
-        ports_.push_back(std::move(portDef));
-        return ports_.back();
-    }
+    Port& addPort(const Port portDef);
 
     /// Finds a port with portName
     /// \return pointer to the port if found; otherwise nullptr
     /// \p portName name of port to find
-    Port* findPort(const std::string& portName) {
-        auto portIt = std::find_if(ports_.begin(), ports_.end(), 
-        [&portName](const Port& port) {
-            return port.name() == portName;
-        });
-    
-        if (portIt == ports_.end()) {
-            return nullptr;
-        }
-
-        return &(*portIt);
-    }
+    Port* findPort(const std::string& portName);
 
     /// Adds an InstanceDefinition
     /// \return Address of newly added instance
     /// Throws exception of an instance with the same name already exists within this module
-    InstanceDefinition& addInstance(const InstanceDefinition instance) {
-        auto instIt = std::lower_bound(instances_.begin(), instances_.end(), instance.name(),
-            [](const InstanceDefinition& inst, const std::string& instName){
-                return inst.name() < instName;
-            });
-
-
-        // If instIt is equal to end(), then the item doesn't exist
-        if (instIt == instances_.end()) {
-            instances_.push_back(std::move(instance));
-            return instances_.back();
-        }
-
-        // if the names are the same then we're trying to insert an instance with the same name
-        if (instIt->name() == instance.name()) {
-            const std::string error = "Cannot have multiple instances with the same name: " + instIt->name() + ":" + instance.name();
-            throw std::runtime_error(error);
-        }
-
-        // now we can just insert at the position
-        return *instances_.insert(instIt, std::move(instance));
-    }
+    InstanceDefinition& addInstance(const InstanceDefinition instance);
 
     /// Finds an instance by name
     /// \return pointer to instance if it exists; otherwise nullptr
-    InstanceDefinition* findInstance(const std::string& instanceName) {
-        auto instIt = std::lower_bound(instances_.begin(), instances_.end(), instanceName,
-            [](const InstanceDefinition& inst, const std::string& instName){
-                return inst.name() < instName;
-            });
+    InstanceDefinition* findInstance(const std::string& instanceName);
 
-        if (instIt == instances_.end()) {
-            return nullptr;
-        }
+    /// Adds a gate
+    /// \return Address of newly added gate
+    /// Throws exception of an gate with the same name already exists within this module
+    InstanceDefinition& addGate(const InstanceDefinition gateInst);
 
-        return &(*instIt);
-    }
+
+    /// Finds a gate by name
+    /// \return pointer to instance if it exists; otherwise nullptr
+    InstanceDefinition* findGate(const std::string& gateName);
 
     /// Adds a net
     /// \return Reference to newly added net
     /// Throws an exception if a net with the same name already exists
-    Net& addNet(const Net net) {
-        auto netIt = std::lower_bound(nets_.begin(), nets_.end(), net.name(),
-            [](const Net& net, const std::string& netName){
-                return net.name() < netName;
-            });
-
-
-        // If instIt is equal to end(), then the item doesn't exist
-        if (netIt == nets_.end()) {
-            nets_.push_back(std::move(net));
-            return nets_.back();
-        }
-
-        // if the names are the same then we're trying to insert an instance with the same name
-        if (netIt->name() == net.name()) {
-            const std::string error = "Cannot have multiple nets with the same name in a module: " + net.name() + ":" + netIt->name();
-            throw std::runtime_error(error);
-        }
-
-        // now we can just insert at the position
-        return *nets_.insert(netIt, std::move(net));     
-    }
+    Net& addNet(const Net net);
 
     /// Finds a net
     /// \return Pointer to existing net; otherwise nullptr
-    Net* findNet(const std::string& netName) {
-       auto netIt = std::lower_bound(nets_.begin(), nets_.end(), netName,
-            [](const Net& net, const std::string& netName){
-                return net.name() < netName;
-            });
-
-        if (netIt == nets_.end()) {
-            return nullptr;
-        }
-
-        return &(*netIt);
-    }
+    Net* findNet(const std::string& netName);
 
 
     const std::string& name() const { return name_; }
@@ -292,6 +200,7 @@ private:
     std::string name_;
     std::vector<Port> ports_;
     std::vector<InstanceDefinition> instances_;
+    std::vector<InstanceDefinition> gates_;
     std::vector<Net> nets_;
 };
 
