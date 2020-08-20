@@ -148,12 +148,15 @@ public:
 
     void addOutput(const std::string output)    { gateOut_.push_back(std::move(output)); }
 
+    void addEnable(const std::string enable)    { enable_ = std::move(enable); }
+
     const std::string& name() const { return name_; }
     const std::string& type() const { return type_; }
 
 private:
     std::string type_;
     std::string name_;
+    std::string enable_;
     std::vector<std::string> gateOut_;
     std::vector<std::string> gateIn_;
 };
