@@ -86,24 +86,34 @@ Circuit::Definition::VerilogPrimitive to_primitive(Verilog2001Parser::Gate_insta
         auto prim = Circuit::Definition::VerilogPrimitive(std::move(type), std::move(name));
         prim.addInput(gate->n_output_gate_instance().front()->input_terminal()->getText());
 
-        std::cout << "gate_type: " << type << "\t\tgate_name: " << name << std::endl;
         for (auto outTerminal: gate->n_output_gate_instance().front()->output_terminal()) {
-            std::cout << "\t" << outTerminal->getText() << std::endl;
             prim.addOutput(outTerminal->getText());
         }
         return prim;
 
     } else if (gate->n_input_gatetype() != nullptr) {
+        /// Handle n_input gates
         const std::string type = gate->n_input_gatetype()->getText();
         const std::string name = gate->n_input_gate_instance().front()->name_of_gate_instance()->getText();
         auto prim = Circuit::Definition::VerilogPrimitive(std::move(type), std::move(name));
         prim.addOutput(gate->n_input_gate_instance().front()->output_terminal()->getText());
 
-        std::cout << "gate_type: " << type << "\t\tgate_name: " << name << std::endl;
         for (auto inTerminal: gate->n_input_gate_instance().front()->input_terminal()) {
-            std::cout << "\t" << inTerminal->getText() << std::endl;
             prim.addInput(inTerminal->getText());
         }
+        return prim;
+    } else if (gate->enable_gatetype() != nullptr) {
+        /// Handle gates with enables
+        const std::string type = gate->enable_gatetype()->getText();
+        const std::string name = gate->enable_gate_instance().front()->name_of_gate_instance()->getText();
+        const std::string enableTerminal = gate->enable_gate_instance().front()->enable_terminal()->getText();
+        const std::string input = gate->enable_gate_instance().front()->input_terminal()->getText();
+        const std::string output = gate->enable_gate_instance().front()->output_terminal()->getText();
+
+        auto prim = Circuit::Definition::VerilogPrimitive(std::move(type), std::move(name));
+        prim.addEnable(std::move(enableTerminal));
+        prim.addInput(std::move(input));
+        prim.addOutput(std::move(output));
         return prim;
     }
 
