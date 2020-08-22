@@ -38,3 +38,7 @@ void Verilog2001BaseListener::enterModule_instantiation(Verilog2001Parser::Modul
     const auto instance = to_instance(inst);
     circuit.getModule().addInstance(std::move(instance));
 }
+
+void Verilog2001BaseListener::enterContinuous_assign(Verilog2001Parser::Continuous_assignContext* assign) {
+    std::cout << "continuous assighment: " << assign->getText() << std::endl;
+}

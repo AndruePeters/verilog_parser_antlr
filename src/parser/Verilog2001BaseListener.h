@@ -580,7 +580,7 @@ public:
 
      void exitGenerate_block(Verilog2001Parser::Generate_blockContext* /*ctx*/) override {}
 
-     void enterContinuous_assign(Verilog2001Parser::Continuous_assignContext* /*ctx*/) override {}
+     void enterContinuous_assign(Verilog2001Parser::Continuous_assignContext* /*ctx*/) override;
 
      void exitContinuous_assign(Verilog2001Parser::Continuous_assignContext* /*ctx*/) override {}
 
